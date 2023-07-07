@@ -4,21 +4,25 @@ import Search from "@/Views/Search.vue"
 const routes = [
     {
         path: "/",
-        component:Search
+        component: Search
+    },
+    {
+        path: "/mostrented",
+        component: () => import("@/Views/MostRented.vue")
     },
     {
         path: "/about",
-        component:()=>import("@/Views/About.vue")
+        component: () => import("@/Views/About.vue")
     },
     {
         path: "/book/:id",
         component: () => import("@/Views/Book.vue"),
-        props:true
+        props: true
     }
 ]
 
 const router = createRouter({
-    history:createWebHistory(),
+    history: createWebHistory(),
     routes
 })
 
