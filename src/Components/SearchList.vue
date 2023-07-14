@@ -1,9 +1,6 @@
 <template>
-    <table class="table">
-
-    </table>
     <div v-for="b in books_list">
-        <BookMin :id="b.id" :title="b.title"  :authors="b.authors" :genres="b.genres"></BookMin>
+        <BookMin :id="b.id" :title="b.title" :authors="b.authors" :genres="b.genres"></BookMin>
     </div>
 </template>
 
@@ -12,9 +9,9 @@ import BookMin from "@/Sub/BookMin.vue"
 export default {
     name: "SearchList",
     props: ["books_list_prop"],
-    data(){
+    data() {
         return {
-            books_list:[]
+            books_list: []
         }
     },
     methods: {
@@ -25,6 +22,6 @@ export default {
     mounted() {
         this.SetUpBooksList()
     },
-    components:{BookMin}
+    components: { BookMin }
 }
 </script>
