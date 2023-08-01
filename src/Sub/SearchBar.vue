@@ -15,6 +15,7 @@
     <div class="collapse" id="filterCollapse">
         <div class="card p-3">
             <h5 class="text-dark mb-3">Advance search</h5>
+
             <!-- #1 -->
             <div class="row g-3 mb-3">
 
@@ -104,15 +105,16 @@
                     <div class="input-group mb-3">
                         <label for="selectshow" class="input-group-text">To show</label>
                         <select name="selectshow" class="form-select">
-                            <option @click="() => toshow = 5" selected>5</option>
-                            <option @click="() => toshow = 10">10</option>
-                            <option @click="() => toshow = 15">15</option>
-                            <option @click="() => toshow = 20">20</option>
+                            <option @click="() => toshow = '5'" selected>5</option>
+                            <option @click="() => toshow = '10'">10</option>
+                            <option @click="() => toshow = '15'">15</option>
+                            <option @click="() => toshow = '20'">20</option>
                         </select>
                     </div>
                 </div>
 
             </div>
+
         </div>
     </div>
 </template>
@@ -120,7 +122,7 @@
 <script>
 export default {
     name: "SearchBar",
-    emits: ["InputChange"],
+    emits: ["FilterQueryEvent"],
     data() {
         return {
             query: "",
@@ -131,14 +133,14 @@ export default {
             toshow: 5,
             rented: 0,
             date_string: "",
-            rented_order: false,
-            date_order: false
+            rented_order: true,
+            date_order: true
         }
     },
     methods: {
         EmitChange() {
             if (this.search.length > 0) {
-                this.UpdateQuerySection(this.search.replace(/\s/g, "_"))
+                this.UpdateQuerySection(this.ReplaceCommasAndSpaces(this.search, "title"))
 
                 if (!this.HasAuthorsErrors && (this.authors != "" && this.authors != null)) {
                     this.UpdateQuerySection(this.ReplaceCommasAndSpaces(this.authors, "authors"), null)
@@ -160,19 +162,23 @@ export default {
                     this.UpdateQuerySection(this.ReplaceCommasAndSpaces(this.date_string, "date"), this.date_order)
                 }
 
-                this.UpdateQuerySection(this.toshow, "take")
-            }
+                this.UpdateQuerySection(this.ReplaceCommasAndSpaces(this.toshow, "take"), null)
 
-            this.$emit("FilterQueryEvent", this.data.search)
+                this.query = this.query + "$page=1"
+
+                this.$emit("FilterQueryEvent", this.query)
+
+                this.url = ""
+            }
         },
         ReplaceCommasAndSpaces(toreplace, prefix) {
-            const sanitazed_query = `$${prefix}=${toreplace.replace(/\,/g, "%").replace(/\s/g, "_")}`
+            const sanitazed_query = `$${prefix}=${toreplace.toString().replace(/\,/g, "%").replace(/\s/g, "_")}`
             return sanitazed_query
         },
         UpdateQuerySection(toadd, metadata) {
             this.query = this.query + toadd
             if (metadata != null)
-                this.query = this.query + "#" + metadata
+                this.query = this.query + ":" + (metadata ? "ASC" : "DESC")
         },
         CheckIfIsOnlyAlphabetic(input) {
             const regex = /[^a-z|A-Z^\,^\s]/
